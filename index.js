@@ -8,15 +8,14 @@ const recordRoutes = require('./routes/recordRoutes');
 dotenv.config();
 const app = express();
 
-// --- 1. MUKAMMAL CORS FIX (MANUAL MIDDLEWARE) ---
+// --- 1. FULL CORS BYPASS (Place this at the very top) ---
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*'); // Har jagah se allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
     
-    // Pre-flight requests (OPTIONS) ko foran 200 OK bhej do
     if (req.method === 'OPTIONS') {
-        return res.status(200).end();
+        return res.status(200).json({});
     }
     next();
 });
@@ -27,12 +26,12 @@ app.use(morgan('dev'));
 // --- 2. ROUTES ---
 app.use('/api/records', recordRoutes);
 
-// --- 3. DATABASE ---
+// Database Connection
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("✅ Resin Art Database Connected!"))
     .catch((err) => console.log("❌ DB Error:", err));
 
-// Vercel ke liye zaroori hai
+// Root route (Checking backend status)
 app.get('/', (req, res) => res.send("MOBILE CITY BACKEND IS LIVE!"));
 
 const PORT = process.env.PORT || 5000;
