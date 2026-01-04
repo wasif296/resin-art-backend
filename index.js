@@ -9,7 +9,12 @@ dotenv.config();
 const app = express();
 
 // Middlewares
-app.use(cors()); // CORS permission
+// index.js mein purana cors hata kar ye likhein:
+app.use(cors({
+    origin: "*", // Is se har jagah se access allow ho jayega
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+}));
 app.use(express.json()); 
 app.use(morgan('dev'));
 
